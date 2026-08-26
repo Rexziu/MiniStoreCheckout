@@ -1,6 +1,8 @@
+
 function calculateItemAmount(price, quantity) {
   return price * quantity;
 }
+
 function calculateDiscount(subtotal) {
   let discountRate = 0;
 
@@ -39,7 +41,6 @@ function getDeliveryFee(option) {
   return fee;
 }
 
-
 function getDiscountRateLabel(subtotal) {
   if (subtotal >= 5000) return "10%";
   else if (subtotal >= 3000) return "7%";
@@ -73,16 +74,20 @@ const validationMessage = document.getElementById("validationMessage");
 const orderSummary = document.getElementById("orderSummary");
 const calculateBtn = document.getElementById("calculateBtn");
 
-productCountField.addEventListener("input", function () {
-  validationMessage.textContent = "";
-  orderSummary.textContent = "";
-  productsContainer.innerHTML = "";
+let lastGeneratedCount = 0; 
 
+function generateProductFields() {
   const productCount = Number(productCountField.value);
 
-  if (!productCount || productCount <= 0) {
+  if (!productCount || productCount <= 0 || isNaN(productCount)) {
     return;
   }
+
+  if (productCount === lastGeneratedCount) {
+    return;
+  }
+
+  productsContainer.innerHTML = "";
 
   for (let i = 0; i < productCount; i++) {
     const block = document.createElement("div");
@@ -100,9 +105,23 @@ productCountField.addEventListener("input", function () {
     `;
     productsContainer.appendChild(block);
   }
-});
 
+  lastGeneratedCount = productCount;
+}
+
+productCountField.addEventListener("input", generateProductFields);
+productCountField.addEventListener("change", generateProductFields);
+productCountField.addEventListener("keyup", generateProductFields);
+productCountField.addEventListener("blur", generateProductFields);
+
+
+setInterval(generateProductFields, 250);
+
+   
 calculateBtn.addEventListener("click", function () {
+
+  generateProductFields();
+
   validationMessage.textContent = "";
   orderSummary.textContent = "";
 
@@ -122,8 +141,8 @@ calculateBtn.addEventListener("click", function () {
     return;
   }
 
-  const products = []; 
-  let subtotal = 0;    
+  const products = []; // holds validated product data
+  let subtotal = 0;     // accumulator
 
   for (let i = 0; i < productCount; i++) {
     const nameField = document.getElementById(`productName-${i}`);
@@ -151,7 +170,7 @@ calculateBtn.addEventListener("click", function () {
 
     if (name !== "" && !isNaN(price) && price > 0 && !isNaN(quantity) && quantity > 0) {
       const amount = calculateItemAmount(price, quantity);
-      subtotal += amount;
+      subtotal += amount; // accumulate subtotal
       products.push({ name, price, quantity, amount });
     }
   }
@@ -167,6 +186,7 @@ calculateBtn.addEventListener("click", function () {
   const deliveryFee = getDeliveryFee(deliveryOption);
   const finalAmount = subtotal - discountAmount + deliveryFee;
 
+
   let productLines = "";
   products.forEach((p, index) => {
     productLines += `${index + 1}. ${p.name}\n`;
@@ -174,6 +194,7 @@ calculateBtn.addEventListener("click", function () {
     productLines += `   Quantity: ${p.quantity}\n`;
     productLines += `   Amount: ${formatCurrency(p.amount)}\n\n`;
   });
+
 
   const summary = `Customer: ${customerName}
 
