@@ -1,4 +1,3 @@
-
 function calculateItemAmount(price, quantity) {
   return price * quantity;
 }
@@ -16,8 +15,7 @@ function calculateDiscount(subtotal) {
     discountRate = 0;
   }
 
-  const discountAmount = subtotal * discountRate;
-  return discountAmount;
+  return subtotal * discountRate;
 }
 
 function getDeliveryFee(option) {
@@ -74,7 +72,7 @@ const validationMessage = document.getElementById("validationMessage");
 const orderSummary = document.getElementById("orderSummary");
 const calculateBtn = document.getElementById("calculateBtn");
 
-let lastGeneratedCount = 0; 
+let lastGeneratedCount = 0;
 
 function generateProductFields() {
   const productCount = Number(productCountField.value);
@@ -91,17 +89,15 @@ function generateProductFields() {
 
   for (let i = 0; i < productCount; i++) {
     const block = document.createElement("div");
-    block.className = "product-block";
     block.innerHTML = `
-      <h3>Product ${i + 1}</h3>
       <label for="productName-${i}">Product Name</label>
-      <input type="text" id="productName-${i}" placeholder="Enter product name" />
+      <input type="text" id="productName-${i}" />
 
       <label for="productPrice-${i}">Price</label>
-      <input type="number" id="productPrice-${i}" placeholder="Enter price" step="0.01" />
+      <input type="number" id="productPrice-${i}" />
 
       <label for="productQuantity-${i}">Quantity</label>
-      <input type="number" id="productQuantity-${i}" placeholder="Enter quantity" step="1" />
+      <input type="number" id="productQuantity-${i}" />
     `;
     productsContainer.appendChild(block);
   }
@@ -114,12 +110,9 @@ productCountField.addEventListener("change", generateProductFields);
 productCountField.addEventListener("keyup", generateProductFields);
 productCountField.addEventListener("blur", generateProductFields);
 
-
 setInterval(generateProductFields, 250);
 
-   
 calculateBtn.addEventListener("click", function () {
-
   generateProductFields();
 
   validationMessage.textContent = "";
@@ -141,8 +134,8 @@ calculateBtn.addEventListener("click", function () {
     return;
   }
 
-  const products = []; // holds validated product data
-  let subtotal = 0;     // accumulator
+  const products = [];
+  let subtotal = 0;
 
   for (let i = 0; i < productCount; i++) {
     const nameField = document.getElementById(`productName-${i}`);
@@ -170,7 +163,7 @@ calculateBtn.addEventListener("click", function () {
 
     if (name !== "" && !isNaN(price) && price > 0 && !isNaN(quantity) && quantity > 0) {
       const amount = calculateItemAmount(price, quantity);
-      subtotal += amount; // accumulate subtotal
+      subtotal += amount;
       products.push({ name, price, quantity, amount });
     }
   }
@@ -186,7 +179,6 @@ calculateBtn.addEventListener("click", function () {
   const deliveryFee = getDeliveryFee(deliveryOption);
   const finalAmount = subtotal - discountAmount + deliveryFee;
 
-
   let productLines = "";
   products.forEach((p, index) => {
     productLines += `${index + 1}. ${p.name}\n`;
@@ -194,7 +186,6 @@ calculateBtn.addEventListener("click", function () {
     productLines += `   Quantity: ${p.quantity}\n`;
     productLines += `   Amount: ${formatCurrency(p.amount)}\n\n`;
   });
-
 
   const summary = `Customer: ${customerName}
 
