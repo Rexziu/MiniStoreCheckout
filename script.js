@@ -1,3 +1,4 @@
+
 function calculateItemAmount(price, quantity) {
   return price * quantity;
 }
@@ -17,6 +18,7 @@ function calculateDiscount(subtotal) {
 
   return subtotal * discountRate;
 }
+
 
 function getDeliveryFee(option) {
   let fee = 0;
@@ -38,6 +40,7 @@ function getDeliveryFee(option) {
 
   return fee;
 }
+
 
 function getDiscountRateLabel(subtotal) {
   if (subtotal >= 5000) return "10%";
@@ -66,13 +69,17 @@ function formatCurrency(amount) {
   });
 }
 
+
 const productCountField = document.getElementById("productCount");
 const productsContainer = document.getElementById("productsContainer");
 const validationMessage = document.getElementById("validationMessage");
 const orderSummary = document.getElementById("orderSummary");
 const calculateBtn = document.getElementById("calculateBtn");
 
+
 let lastGeneratedCount = 0;
+
+
 
 function generateProductFields() {
   const productCount = Number(productCountField.value);
@@ -89,15 +96,17 @@ function generateProductFields() {
 
   for (let i = 0; i < productCount; i++) {
     const block = document.createElement("div");
+    block.className = "product-block";
     block.innerHTML = `
+      <h3>Product ${i + 1}</h3>
       <label for="productName-${i}">Product Name</label>
-      <input type="text" id="productName-${i}" />
+      <input type="text" id="productName-${i}" placeholder="Enter product name" />
 
       <label for="productPrice-${i}">Price</label>
-      <input type="number" id="productPrice-${i}" />
+      <input type="number" id="productPrice-${i}" placeholder="Enter price" step="0.01" />
 
       <label for="productQuantity-${i}">Quantity</label>
-      <input type="number" id="productQuantity-${i}" />
+      <input type="number" id="productQuantity-${i}" placeholder="Enter quantity" step="1" />
     `;
     productsContainer.appendChild(block);
   }
@@ -112,7 +121,9 @@ productCountField.addEventListener("blur", generateProductFields);
 
 setInterval(generateProductFields, 250);
 
+
 calculateBtn.addEventListener("click", function () {
+  // Make sure the product fields match the current count before validating
   generateProductFields();
 
   validationMessage.textContent = "";
@@ -134,8 +145,9 @@ calculateBtn.addEventListener("click", function () {
     return;
   }
 
-  const products = [];
-  let subtotal = 0;
+  const products = []; 
+  let subtotal = 0;      
+
 
   for (let i = 0; i < productCount; i++) {
     const nameField = document.getElementById(`productName-${i}`);
